@@ -1,12 +1,14 @@
 ''' Utility functions for spark_pkg/*/mllib.py '''
 
-from pyspark.ml.feature import OneHotEncoderEstimator, StringIndexer, VectorAssembler
+
+from pyspark.ml.feature import OneHotEncoder, StringIndexer, VectorAssembler
 from pyspark.ml import Pipeline
 from pyspark.ml.tuning import CrossValidator,ParamGridBuilder
 from pyspark.ml.regression import *
 from pyspark.ml.classification import *
 from pyspark.ml.evaluation import *
-from numpy import arange
+# from numpy import arange
+
 
 def encode_data(df, categorical_cols, numeric_cols, predict_col, encode_predict_col):
     """
@@ -25,7 +27,7 @@ def encode_data(df, categorical_cols, numeric_cols, predict_col, encode_predict_
     # one hot encoding stages for categorical predictor variables
     for categoricalCol in categorical_cols:
         stringIndexer = StringIndexer(inputCol = categoricalCol, outputCol = categoricalCol + 'Index')
-        encoder = OneHotEncoderEstimator(inputCols=[stringIndexer.getOutputCol()], outputCols=[categoricalCol + "classVec"])
+        encoder = OneHotEncoder(inputCols=[stringIndexer.getOutputCol()], outputCols=[categoricalCol + "classVec"])
         stages += [stringIndexer, encoder]
     # possibly one hot encode the predict_col if this is a classification problem
     predict_col_tf = predict_col
@@ -173,7 +175,7 @@ def run_classification_models(train,test,metric_file_path,classes):
     print(name)
     print('\t Best regParam (lambda): %.2f'%best_model._java_obj.getRegParam())
     print('\t Best elasticNetparam (alpha): %.2f'%best_model._java_obj.getElasticNetParam())
-    eval_model(f,name,model_cv,test,MulticlassClassificationEvaluator,metric_names)
+    eval_model(f, name, model_cv, test, MulticlassClassificationEvaluator, metric_names)
     name = 'Decision Tree'
     model = DecisionTreeClassifier(seed=7)
     param_grid = ParamGridBuilder()\
@@ -190,7 +192,7 @@ def run_classification_models(train,test,metric_file_path,classes):
     print(name)
     print('\t Best maxDepth: %d'%best_model._java_obj.getMaxDepth())
     print('\t Best maxBins: %d'%best_model._java_obj.getMaxBins())
-    eval_model(f,name,model_cv,test,MulticlassClassificationEvaluator,metric_names)
+    eval_model(f, name, model_cv, test, MulticlassClassificationEvaluator, metric_names)
     name = 'Random Forest'
     model = RandomForestClassifier(seed=7)
     param_grid = ParamGridBuilder()\
@@ -207,33 +209,10 @@ def run_classification_models(train,test,metric_file_path,classes):
     print(name)
     print('\t Best maxDepth: %d'%best_model._java_obj.getMaxDepth())
     print('\t Best numTrees: %d'%best_model._java_obj.getNumTrees())
-    eval_model(f,name,model_cv,test,MulticlassClassificationEvaluator,metric_names)
-    name = 'One vs Rest'
-    model = OneVsRest(classifier=LogisticRegression()).fit(train)
-    print(name)
-    eval_model(f,name,model,test,MulticlassClassificationEvaluator,metric_names)
-    name = 'Naive Bayes'
-    model = NaiveBayes()
-    param_grid = ParamGridBuilder()\
-        .addGrid(model.smoothing,[.5,1,2])\
-        .build()
-    model_cv = CrossValidator(
-        estimator = model,
-        estimatorParamMaps = param_grid,
-        evaluator = MulticlassClassificationEvaluator(),
-        numFolds = 3,
-        seed = 7).fit(train)
-    best_model = model_cv.bestModel  
-    print(name)
-    print('\t Best smoothing: %.1f'%best_model._java_obj.getSmoothing())
-    eval_model(f,name,model_cv,test,MulticlassClassificationEvaluator,metric_names)
+    eval_model(f, name, model_cv, test, MulticlassClassificationEvaluator, metric_names)
     if classes == 2:
         name = 'Gradient Boosted Trees'
         model = GBTClassifier(seed=7).fit(train)
         print(name)
-        eval_model(f,name,model,test,MulticlassClassificationEvaluator,metric_names)
-        name = 'Linear Support Vector Machine'
-        model = LinearSVC().fit(train)
-        print(name)
-        eval_model(f,name,model,test,MulticlassClassificationEvaluator,metric_names)    
+        eval_model(f, name, model_cv, test, MulticlassClassificationEvaluator, metric_names)
     f.close()
