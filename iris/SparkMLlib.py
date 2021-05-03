@@ -29,7 +29,8 @@ df = encode_data(df,
         encode_predict_col = True)
 
 # split into train and test datsets
-train, test = df.randomSplit([.75, .25], seed=7)
+# train, test = df.randomSplit([.75, .25], seed=60616)
+train, test = df.randomSplit([.75, .25])
 
 # modeling
 run_classification_models(train, test, 'iris_metric.csv', classes=3)
