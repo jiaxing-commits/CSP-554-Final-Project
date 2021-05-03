@@ -11,12 +11,12 @@ def multiple_bar_plot(tool, dataset, df):
     plt.set(title='%s Model Metrics for %s Dataset' %(tool, dataset), ylabel='metric', xlabel='')
     plt.despine(left=True)
     plt.set_xticklabels(rotation=45)
-    plt.savefig('%s.png' %dataset.lower())
+    plt.savefig('%s_%s.png' %(dataset.lower(), tool.lower()))
 
 
-tools = ['Spark']
+tools = ['Spark', 'Scikit']
 datasets = ['Iris']
 for tool in tools:
     for dataset in datasets:
-        df = pd.read_csv('%s_metric.csv' %dataset.lower())
+        df = pd.read_csv('%s_%s_metric.csv' % (dataset.lower(), tool.lower()))
         multiple_bar_plot(tool, dataset, df)

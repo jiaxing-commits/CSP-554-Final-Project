@@ -33,4 +33,4 @@ df = encode_data(df,
 train, test = df.randomSplit([.75, .25])
 
 # modeling
-run_classification_models(train, test, 'iris_metric.csv', classes=3)
+run_classification_models(train, test, 'iris_spark_metric.csv', classes=3)
