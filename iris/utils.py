@@ -1,5 +1,12 @@
 import numpy as np
 
+#modules for Regression models
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import ElasticNet
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+
 #models for Classification models
 from sklearn.linear_model import SGDClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -66,6 +73,52 @@ def print_metrics(y, yhat, model, name, first = False):
             writer.writerow(header)
         writer.writerow(row)
 
+def fit_regression_models(train_X, train_y, test_X, test_y, name):
+    #Linear Regression
+    en_model = ElasticNet(max_iter = 10)
+    en__model = GridSearchCV(en_model, param_grid = {'alpha': [0, 0.25, 0.5], 'l1_ratio':[0, 0.25, 0.5]})
+    en__model.fit(train_X, train_y)
+    predictions = en__model.predict(test_X)
+    
+    #printing metrics and writing to file
+    print('Linear Regression')
+    print("\t Best alpha: %.2f"%en__model.best_params_['alpha'])
+    print("\t Best l1_ratio: %.2f"%en__model.best_params_['l1_ratio'])
+    print_metrics(test_y, predictions, 'Linear Regression', name, first = True)
+    
+
+
+    #Decision Tree Regression
+    dt_model = DecisionTreeRegressor(random_state = 7)
+    dt__model = GridSearchCV(dt_model, param_grid = {'max_depth': [5, 10, 15]}, cv = 3)
+    dt__model.fit(train_X, train_y)
+    predictions = dt__model.predict(test_X)
+    
+    #printing metrics and writing to file
+    print('Decision Tree')
+    print("\t Best max_depth: %d"%dt__model.best_params_['max_depth'])
+    print_metrics(test_y, predictions, 'Decision Tree', name)
+
+    #Random Forest Regression
+    rf_model = RandomForestRegressor(random_state = 7)
+    rf__model = GridSearchCV(rf_model, param_grid = {'max_depth': [5, 10, 15], 'n_estimators': [10, 15, 20]}, cv = 3)
+    rf__model.fit(train_X, train_y)
+    predictions = rf__model.predict(test_X)
+    
+    #printing metrics and writing to file
+    print('Random Forest')
+    print("\t Best max_depth: %d"%rf__model.best_params_['max_depth'])
+    print("\t Best n_estimators: %d"%rf__model.best_params_['n_estimators'])
+    print_metrics(test_y, predictions, 'Random Forest', name)
+
+    #Gradient Boosting Regression
+    gb_model = GradientBoostingRegressor(random_state = 7)
+    gb_model.fit(train_X, train_y)
+    predictions = gb_model.predict(test_X)
+    
+    #printing metrics and writing to file
+    print('Gradient Boosted Trees')
+    print_metrics(test_y, predictions, 'Gradient Boosted Trees', name)
 
 def get_metrics_classification(y, yhat, model, name, first = False):
     
