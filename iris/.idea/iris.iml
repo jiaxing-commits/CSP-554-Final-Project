@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://C:/Program Files/spark-2.1.0-bin-hadoop2.7/python/lib" />
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Python 3.7 (venv)" jdkType="Python SDK" />
+    <content url="jar://C:/Program Files/spark-2.1.0-bin-hadoop2.7/python/lib/py4j-0.10.4-src.zip!/" />
+    <orderEntry type="jdk" jdkName="Python 3.7 (iris) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

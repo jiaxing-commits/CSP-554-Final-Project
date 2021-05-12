@@ -15,7 +15,7 @@ def multiple_bar_plot(tool, dataset, df):
 
 
 tools = ['Spark', 'Scikit']
-datasets = ['Iris']
+datasets = ['Airline']
 for tool in tools:
     for dataset in datasets:
         df = pd.read_csv('%s_%s_metric.csv' % (dataset.lower(), tool.lower()))
